@@ -1,6 +1,7 @@
 # picoJSON - A tiny JSON parser written in C++
 
 picoJSON is a very small library for parsing files with the JSON-format.
+It is a header-include only library.
 
 # Building the test
 
@@ -9,14 +10,15 @@ Run:
 make test
 ```
 
-# Building the library
-```
-make lib
-```
+# Integrating with your own project
+
+Just copy picoJSON to an appropriate location in your project and include
+`picoJSON.hpp`
 
 # API Documentation
 
 To read, lex and parse a .json-file create a `Parser` object as follows:
+
 ```
 include "picoJSON.hpp" // Include the picoJSON header file to use all of the functionality
 
@@ -28,17 +30,19 @@ try {
   // Handle caught exception
 }
 ```
+
 If the file does not exist or if the file contains syntax errors an exception will be thrown.
 Note, that the parser in picoJSON does not care about whitespace as long as the file begins with a json object (`{`) as expected.
 
 To see how the Lexer in picoJSON has analyzed the file, you can print all the lexed tokens:
+
 ```
 parser.printTokens();
 
 parser.print(); // Short format
 ```
 
-In picoJSON every json value is contained in a `JSON` object. 
+In picoJSON every json value is contained in a `JSON` object.
 All the different json data-types has its own specialized class that inherits from the `JSON` class.
 For example all valid numbers are contained in the `JSONNumber` class.
 
