@@ -19,8 +19,18 @@ namespace picoJSON {
 
     private:
       string msg_;
-      unsigned int line_;
       string suggestion_;
+      unsigned int line_;
+  };
+
+  class ParserException {
+    public:
+      ParserException(string msg);
+
+      const char* message() const noexcept;
+
+    private:
+      string msg_;
   };
 }
 

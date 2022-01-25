@@ -36,7 +36,7 @@ namespace picoJSON {
     private:
       vector<pair<Token, string>*>* tokens_;
       pair<Token, string>* currentTokenPair_;
-      int index_;
+      long unsigned int index_;
 
       JSON* parseJSON() {
         if (!tokens_->empty()) {
@@ -50,8 +50,8 @@ namespace picoJSON {
         advance();
         try {
           return parseValue();
-        } catch (exception e) {
-          throw exception();
+        } catch (ParserException e) {
+          throw ParserException("");
         }
       }
 
@@ -77,7 +77,7 @@ namespace picoJSON {
             break;
         }
 
-        throw exception();
+        throw ParserException("");
       }
 
       JSON* parseObject() {
@@ -86,7 +86,7 @@ namespace picoJSON {
         
         do {
           if (currentTokenPair_ == nullptr)
-            throw exception();
+            throw ParserException("");
 
           switch (currentTokenPair_->first) {
             case RCURLY:
@@ -99,7 +99,7 @@ namespace picoJSON {
           }
         } while (currentTokenPair_ != nullptr);
 
-        throw exception();
+        throw ParserException("");
       }
 
       JSON* parseArray() {
@@ -108,7 +108,7 @@ namespace picoJSON {
 
         do {
           if (currentTokenPair_ == nullptr)
-            throw exception();
+            throw ParserException("");
 
           switch (currentTokenPair_->first) {
             case RBRACE:
@@ -121,12 +121,12 @@ namespace picoJSON {
           }
         } while (currentTokenPair_ != nullptr);
 
-        throw exception();
+        throw ParserException("");
       }
 
       JSONProperty* parseProperty() {
         if (currentTokenPair_ == nullptr) 
-          throw exception();
+          throw ParserException("");
 
         switch (currentTokenPair_->first) {
           case STRING: {
@@ -136,13 +136,13 @@ namespace picoJSON {
                 advance();
                 return new JSONProperty(str, parseValue());
             } else
-              throw exception();
+              throw ParserException("");
           }
           default:
             break;
         }
 
-        throw exception();
+        throw ParserException("");
       }
 
       void advance() {
@@ -154,7 +154,6 @@ namespace picoJSON {
         }
       }
   };
-
 }
 
 #endif

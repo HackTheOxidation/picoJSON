@@ -18,7 +18,7 @@ namespace picoJSON {
           JSON* json = parseJSON();
           JSONObject* obj = static_cast<JSONObject*>(json);
           return *(new Content(obj->getValue()));
-        } catch (exception e) {
+        } catch (ParserException e) {
           return *(new Content(nullptr));
         }
       }

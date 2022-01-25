@@ -21,7 +21,6 @@ namespace picoJSON {
       vector<JSONProperty*>* properties_;
 
       JSONProperty* getProperty(string key) const {
-        JSONProperty* res;
         for (JSONProperty* prop : *properties_) {
           if (prop->getKey().compare(key) == 0)
             return prop;

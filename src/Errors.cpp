@@ -24,4 +24,12 @@ namespace picoJSON {
           (*error) += "Did you mean: \"" + suggestion_ + "\"?\n";
         return error->c_str();
   }
+
+  ParserException::ParserException(string msg) : msg_(msg) {}
+
+  const char* ParserException::message() const noexcept {
+    string* error = new string("");
+    (*error) += " ERROR Unexpected Token: \"" + msg_ + "\" .\n";
+    return error->c_str();
+  }
 }
