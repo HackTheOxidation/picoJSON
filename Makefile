@@ -1,26 +1,33 @@
-SOURCES=picoJSON.cpp JSON.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
+SOURCES=src/*.cpp
 CXX=g++
-LIB=picoJSON.a
-TEST_SOURCES=tester.cpp
+CXXFLAGS = -fPIC -shared -I./include/ -pedantic -Wall
+LIB=libpicoJSON.so
+TEST_SOURCES=tests/tester.cpp
 TEST=tester
 
 all: lib
 lib: $(LIB)
-$(OBJECTS): $(SOURCES)
-	$(CXX) -c -o $@ $<
 
-$(LIB): $(OBJECTS)
-	ar rcs $@ $^
-	ranlib $@
+$(LIB): $(SOURCES)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 test: $(TEST)
 $(TEST): $(TEST_SOURCES)
-	$(CXX) -o $@ $^ -g
+	$(CXX) -o $@ $^ -g -lpicoJSON
+
+install: $(LIB)
+	sudo cp $(LIB) /usr/lib
+	sudo mkdir -p /usr/include/picoJSON
+	sudo cp include/*.hpp /usr/include/picoJSON/
+
+uninstall:
+	sudo rm /usr/lib/$(LIB)
+	cd /usr/include
+	sudo rm -rf picoJSON/
 
 clean: clean_lib clean_test
 clean_lib:
-	@rm $(LIB) *.o
+	@rm $(LIB)
 
 clean_test:
 	@rm $(TEST)
