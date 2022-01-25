@@ -6,14 +6,14 @@
 using namespace std;
 
 namespace picoJSON {
-  class JSONNull : public JSON {
-    public:
-      JSONNull(JSONType type);
+class JSONNull : public JSON {
+public:
+  JSONNull(JSONType type);
 
-      long int* getValue() const;
+  long int *getValue() const;
 
-      string toString() const;
-  };
-}
+  string toString() const;
+};
+} // namespace picoJSON
 
 #endif

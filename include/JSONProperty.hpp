@@ -8,27 +8,27 @@ using namespace std;
 
 namespace picoJSON {
 
-  class JSONProperty {
-    private:
-      string key_;
-      JSON* value_;
+class JSONProperty {
+private:
+  string key_;
+  JSON *value_;
 
-    public:
-      JSONProperty(string key, JSON* value);
+public:
+  JSONProperty(string key, JSON *value);
 
-      void print() const;
+  void print() const;
 
-      string toString() const;
+  string toString() const;
 
-      string getKey() const;
+  string getKey() const;
 
-      JSON* getValue();
+  JSON *getValue();
 
-      friend ostream& operator<<(ostream &out, JSONProperty &prop) {
-        out << prop.toString();
-        return out;
-      }
-  };
-}
+  friend ostream &operator<<(ostream &out, JSONProperty &prop) {
+    out << prop.toString();
+    return out;
+  }
+};
+} // namespace picoJSON
 
 #endif

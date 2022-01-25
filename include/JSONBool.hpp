@@ -6,17 +6,17 @@
 using namespace std;
 
 namespace picoJSON {
-  class JSONBool : public JSON {
-    public:
-      JSONBool(JSONType type, bool value);
+class JSONBool : public JSON {
+public:
+  JSONBool(JSONType type, bool value);
 
-      bool getValue() const;
+  bool getValue() const;
 
-      string toString() const;
+  string toString() const;
 
-    private:
-      bool value_;
-  };
-}
+private:
+  bool value_;
+};
+} // namespace picoJSON
 
 #endif

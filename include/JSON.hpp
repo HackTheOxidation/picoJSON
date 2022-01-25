@@ -7,35 +7,26 @@ using namespace std;
 
 namespace picoJSON {
 
-  enum JSONType {
-    Bool,
-    String,
-    Number,
-    Null,
-    Array,
-    Object
-  };
+enum JSONType { Bool, String, Number, Null, Array, Object };
 
-  class JSON {
-    private:
-      JSONType type_;
+class JSON {
+private:
+  JSONType type_;
 
-    public:
-      JSON(JSONType);
-      void print() const;
-      virtual ~JSON() {}
-      virtual string toString() const;
+public:
+  JSON(JSONType);
+  void print() const;
+  virtual ~JSON() {}
+  virtual string toString() const;
 
-      JSONType getType() const {
-        return type_;
-      }
+  JSONType getType() const { return type_; }
 
-      friend ostream& operator<<(ostream &out, JSON &json) {
-        out << json.toString();
-        return out;
-      }
-  };
+  friend ostream &operator<<(ostream &out, JSON &json) {
+    out << json.toString();
+    return out;
+  }
+};
 
-  string toString(JSON* json);
-}
+string toString(JSON *json);
+} // namespace picoJSON
 #endif

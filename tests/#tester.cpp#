@@ -1,5 +1,5 @@
-#include <iostream>
 #include <picoJSON/picoJSON.hpp>
+#include <iostream>
 #include <stdlib.h>
 #include <string>
 
@@ -9,7 +9,7 @@ using namespace std;
 int main(void) {
   cout << "##### TESTING - picoJSON #####" << endl << endl;
   try {
-    Parser parser("config.json");
+    Parser parser("config.json"); 
     cout << "----- LEXING COMPLETED -----" << endl;
 
     cout << "----- LEXED TOKENS: -----" << endl;
@@ -19,37 +19,38 @@ int main(void) {
     cout << "----- LEXED TOKENS (Short format): -----" << endl;
     parser.print();
 
-    Content content = parser.getContent();
-    cout << "----- PARSING COMPLETED -----" << endl << endl;
-    ;
+    Content content = parser.getContent();     
+    cout << "----- PARSING COMPLETED -----" << endl << endl;;
 
     cout << "----- PARSER OUTPUT -----" << endl;
     content.print();
 
     cout << endl;
     cout << "----- TESTING TYPE INFERENCE -----" << endl;
-    vector<JSONProperty *> properties = content.getProperties();
+    vector<JSONProperty*> properties = content.getProperties();
     cout << "----- TYPE INFERENCING SUCCESSFUL -----" << endl;
 
     cout << "----- TESTING EXTRACTION -----" << endl;
-    for (JSONProperty *prop : properties) {
+    for (JSONProperty* prop : properties) {
       cout << *prop << endl;
     }
-
+    
     cout << endl << "Does num exist? " << content.search("num") << endl;
-    float *num = (float *)content.getValue("num", picoJSON::Number);
-    cout << endl << "Value of num: " << *num << endl;
+    float* num = (float *) content.getValue("num", picoJSON::Number);
+    cout << endl << "Value of num: " << *num << endl; 
 
     cout << endl << "Does arr exist? " << content.search("arr") << endl;
-    JSONArray *arr = (JSONArray *)content.getValue("arr", picoJSON::Array);
+    JSONArray* arr = (JSONArray*) content.getValue("arr", picoJSON::Array);
     cout << endl << "Value of arr: ";
-    arr->print();
+    arr->print(); 
     cout << endl;
 
     float f = content.extractNumber("float");
 
+    std::string key("float");
+    JSON& j = content[key];
     cout << "----- EXTRACTION SUCCESSFUL -----" << endl;
-
+    
   } catch (SyntaxException e) {
     cout << "An error occured" << endl;
     cout << e.message() << endl;

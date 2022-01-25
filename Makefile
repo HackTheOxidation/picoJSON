@@ -11,7 +11,7 @@ lib: $(LIB)
 $(LIB): $(SOURCES)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-test: $(TEST)
+test: install $(TEST)
 $(TEST): $(TEST_SOURCES)
 	$(CXX) -o $@ $^ -g -lpicoJSON
 
@@ -24,6 +24,11 @@ uninstall:
 	sudo rm /usr/lib/$(LIB)
 	cd /usr/include
 	sudo rm -rf picoJSON/
+
+format:
+	clang-format -i src/*.cpp
+	clang-format -i include/*.hpp
+	clang-format -i tests/*.cpp
 
 clean: clean_lib clean_test
 clean_lib:

@@ -1,9 +1,9 @@
 #ifndef LEXER_HPP
 #define LEXER_HPP
 
-#include "Token.hpp"
-#include "Reader.hpp"
 #include "Errors.hpp"
+#include "Reader.hpp"
+#include "Token.hpp"
 #include <iostream>
 #include <vector>
 
@@ -11,16 +11,16 @@ using namespace std;
 
 namespace picoJSON {
 
-  class Lexer {
-    public:
-      Lexer(string json);
+class Lexer {
+public:
+  Lexer(string json);
 
-      vector<pair<Token,string>*>* tokenize();
+  vector<pair<Token, string> *> *tokenize();
 
-    private:
-      string json_;
-  };
+private:
+  string json_;
+};
 
-}
+} // namespace picoJSON
 
 #endif

@@ -8,19 +8,19 @@ using namespace std;
 
 namespace picoJSON {
 
-  class JSONArray : public JSON {
-    public:
-      JSONArray(JSONType type, vector<JSON*>* value);
+class JSONArray : public JSON {
+public:
+  JSONArray(JSONType type, vector<JSON *> *value);
 
-      vector<JSON*>* getValue() const;
+  vector<JSON *> *getValue() const;
 
-      string toString() const;
+  string toString() const;
 
-      void print() const;
+  void print() const;
 
-    private:
-      vector<JSON*>* value_;
-  };
-}
+private:
+  vector<JSON *> *value_;
+};
+} // namespace picoJSON
 
 #endif

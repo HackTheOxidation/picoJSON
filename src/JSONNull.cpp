@@ -3,13 +3,9 @@
 using namespace std;
 
 namespace picoJSON {
-  JSONNull::JSONNull(JSONType type) : JSON(type) {}
+JSONNull::JSONNull(JSONType type) : JSON(type) {}
 
-  long int* JSONNull::getValue() const {
-    return NULL;
-  }
+long int *JSONNull::getValue() const { return NULL; }
 
-  string JSONNull::toString() const {
-    return "\"null\"";
-  }
-}
+string JSONNull::toString() const { return "\"null\""; }
+} // namespace picoJSON

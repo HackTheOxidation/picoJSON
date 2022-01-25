@@ -8,18 +8,18 @@
 using namespace std;
 
 namespace picoJSON {
-  const string Whitespace = "\r\n\t ";
-  const string Digits = "1234567890";
+const string Whitespace = "\r\n\t ";
+const string Digits = "1234567890";
 
-  class Reader {
-    public:
-      Reader(string fileName);
+class Reader {
+public:
+  Reader(string fileName);
 
-      string getContent() const;
-      
-    private:
-      string fileName_;
-  };
-}
+  string getContent() const;
+
+private:
+  string fileName_;
+};
+} // namespace picoJSON
 
 #endif
