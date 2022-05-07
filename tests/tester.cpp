@@ -24,9 +24,6 @@ int main(void) {
     cout << "----- PARSING COMPLETED -----" << endl << endl;
     ;
 
-    cout << "----- PARSER OUTPUT -----" << endl;
-    content.print();
-
     cout << endl;
     cout << "----- TESTING TYPE INFERENCE -----" << endl;
     vector<JSONProperty *> properties = content.getProperties();
@@ -38,16 +35,14 @@ int main(void) {
     }
 
     cout << endl << "Does num exist? " << content.search("num") << endl;
-    auto num = content.getValue("num");
+    float num = content["num"].asNumber();
     cout << endl << "Value of num: " << num << endl;
 
     cout << endl << "Does arr exist? " << content.search("arr") << endl;
-    JSON &arr = content.getValue("arr");
+    JSON &arr = content["arr"];
     cout << endl << "Value of arr: ";
     arr.print();
     cout << endl;
-
-    auto num2 = content["num"];
 
     cout << "----- EXTRACTION SUCCESSFUL -----" << endl;
 

@@ -1,4 +1,6 @@
 #include <Content.hpp>
+#include <JSONArray.hpp>
+#include <JSONObject.hpp>
 #include <JSONProperty.hpp>
 #include <exception>
 #include <stdexcept>
@@ -35,6 +37,14 @@ JSON &Content::getValue(string key) const {
   if (!search(key))
     throw 1;
   JSONProperty *prop = getProperty(key);
+
+  switch (prop->getValue()->getType()) {
+  case Array:
+    return *static_cast<JSONArray *>(prop->getValue());
+  case Object:
+    return *static_cast<JSONObject *>(prop->getValue());
+  }
+
   return *prop->getValue();
 }
 
@@ -56,5 +66,14 @@ void Content::print() const {
     cout << "," << endl;
   }
   cout << "}" << endl;
+}
+
+JSONProperty* Content::getProperty(string key) const {
+  for (JSONProperty *prop : *properties_) {
+    if (prop->getKey().compare(key) == 0)
+      return prop;
+    }
+
+    return nullptr;
 }
 } // namespace picoJSON

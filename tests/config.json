@@ -1,0 +1,25 @@
+{
+    "num": 1,
+    "str": "Kaktus",
+    "float": 0.85,
+    "t": true,
+    "f": false,
+    "n": null,
+    "arr": [
+	1,
+	2,
+	3
+    ],
+    "obj": {
+    	"num1": 1,
+    	"num2": 2
+    },
+    "arr2": [
+	{
+	"str2": "Ginseng"
+    },
+	{
+	"str3": "Ficus"
+    }
+    ]
+}

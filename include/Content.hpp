@@ -17,14 +17,7 @@ namespace picoJSON {
 class Content {
 private:
   vector<JSONProperty *> *properties_;
-  JSONProperty *getProperty(string key) const {
-    for (JSONProperty *prop : *properties_) {
-      if (prop->getKey().compare(key) == 0)
-        return prop;
-    }
-
-    return nullptr;
-  }
+  JSONProperty *getProperty(string key) const;
 
 public:
   Content(vector<JSONProperty *> *properties);

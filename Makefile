@@ -3,7 +3,7 @@ CXX=clang++
 CXXFLAGS = -fPIC -shared -I./include/ -pedantic -Wall
 LIB=libpicoJSON.so
 TEST_SOURCES=tests/tester.cpp
-TEST=tester
+TEST=tests/tester
 
 all: lib
 lib: $(LIB)
