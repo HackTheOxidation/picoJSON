@@ -1,5 +1,5 @@
 SOURCES=src/*.cpp
-CXX=g++
+CXX=clang++
 CXXFLAGS = -fPIC -shared -I./include/ -pedantic -Wall
 LIB=libpicoJSON.so
 TEST_SOURCES=tests/tester.cpp
@@ -22,8 +22,7 @@ install: $(LIB)
 
 uninstall:
 	sudo rm /usr/lib/$(LIB)
-	cd /usr/include
-	sudo rm -rf picoJSON/
+	sudo rm -rf /usr/include/picoJSON/
 
 format:
 	clang-format -i src/*.cpp

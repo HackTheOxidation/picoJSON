@@ -1,3 +1,4 @@
+#include <JSON.hpp>
 #include <JSONProperty.hpp>
 
 using namespace std;
@@ -13,7 +14,7 @@ void JSONProperty::print() const {
 string JSONProperty::toString() const {
   string out = key_;
   out += " : ";
-  out += picoJSON::toString(value_);
+  out += value_->getValue();
   return out;
 }
 

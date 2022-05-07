@@ -4,12 +4,8 @@
 #include "Content.hpp"
 #include "JSON.hpp"
 #include "JSONArray.hpp"
-#include "JSONBool.hpp"
-#include "JSONNull.hpp"
-#include "JSONNumber.hpp"
 #include "JSONObject.hpp"
 #include "JSONProperty.hpp"
-#include "JSONString.hpp"
 #include "Lexer.hpp"
 #include "Reader.hpp"
 #include <iostream>
@@ -64,15 +60,15 @@ private:
     case LBRACE:
       return parseArray();
     case JSONTRUE:
-      return new JSONBool(Bool, true);
+      return new JSON(Bool, currentTokenPair_->second);
     case JSONFALSE:
-      return new JSONBool(Bool, false);
+      return new JSON(Bool, currentTokenPair_->second);
     case JSONNULL:
-      return new JSONNull(Null);
+      return new JSON(Null, currentTokenPair_->second);
     case STRING:
-      return new JSONString(String, currentTokenPair_->second);
+      return new JSON(String, currentTokenPair_->second);
     case NUMBER:
-      return new JSONNumber(Number, stof(currentTokenPair_->second));
+      return new JSON(Number, currentTokenPair_->second);
     default:
       break;
     }

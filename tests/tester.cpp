@@ -1,4 +1,5 @@
 #include <iostream>
+#include <picoJSON/JSONArray.hpp>
 #include <picoJSON/picoJSON.hpp>
 #include <stdlib.h>
 #include <string>
@@ -37,16 +38,16 @@ int main(void) {
     }
 
     cout << endl << "Does num exist? " << content.search("num") << endl;
-    float *num = (float *)content.getValue("num", picoJSON::Number);
-    cout << endl << "Value of num: " << *num << endl;
+    auto num = content.getValue("num");
+    cout << endl << "Value of num: " << num << endl;
 
     cout << endl << "Does arr exist? " << content.search("arr") << endl;
-    JSONArray *arr = (JSONArray *)content.getValue("arr", picoJSON::Array);
+    JSON &arr = content.getValue("arr");
     cout << endl << "Value of arr: ";
-    arr->print();
+    arr.print();
     cout << endl;
 
-    float f = content.extractNumber("float");
+    auto num2 = content["num"];
 
     cout << "----- EXTRACTION SUCCESSFUL -----" << endl;
 
