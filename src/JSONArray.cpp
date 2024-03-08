@@ -1,23 +1,19 @@
 #include <JSONArray.hpp>
 
-using namespace std;
-
 namespace picoJSON {
-JSONArray::JSONArray(JSONType type, vector<JSON *> *value)
+  JSONArray::JSONArray(const JSONType type, std::vector<JSON> value)
     : JSON(type), value_(value) {}
 
-vector<JSON *> *JSONArray::getValue() const { return value_; }
+  std::vector<JSON> JSONArray::get_value() const { return value_; }
 
-string JSONArray::toString() const {
-  string out = "[ ";
+  std::string JSONArray::to_string() const {
+    string out = "[ ";
 
-  for (JSON *json : *value_) {
-    out += json->toString();
-    out += " ";
+    for (const JSON json : value_) {
+      out += json->to_string() + " ";
+    }
+    return out + "]";
   }
-  out += "]";
-  return out;
-}
 
-void JSONArray::print() const { cout << toString(); }
+  void JSONArray::print() const { std::cout << to_string(); }
 } // namespace picoJSON

@@ -4,33 +4,29 @@
 #include <exception>
 #include <iostream>
 #include <string>
-
-using namespace std;
+#include <string_view>
 
 namespace picoJSON {
 class SyntaxException {
 public:
-  SyntaxException(string &msg);
-  SyntaxException(string &msg, unsigned int line);
-  SyntaxException(string &msg, string suggestion);
-  SyntaxException(string &msg, string suggestion, unsigned int line);
+  SyntaxException(const std::string_view msg,
+                  const std::string_view suggestion = "",
+                  const unsigned int line = 0)
+    : msg_(msg), suggestion_(suggestion), line_(line) {}
 
-  const char *message() const noexcept;
+  const std::string_view message() const noexcept;
 
 private:
-  string msg_;
-  string suggestion_;
-  unsigned int line_;
+  const std::string_view msg_;
+  const std::string_view suggestion_;
+  const unsigned int line_ = 0;
 };
 
-class ParserException {
+struct ParserException {
 public:
-  ParserException(string msg);
-
-  const char *message() const noexcept;
-
-private:
-  string msg_;
+  constexpr ParserException(const std::string_view msg)
+    : message(msg) {}
+  const std::string_view message;
 };
 } // namespace picoJSON
 

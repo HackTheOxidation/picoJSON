@@ -3,29 +3,25 @@
 #include <sstream>
 #include <string>
 
-using namespace std;
-
 namespace picoJSON {
 
-JSON::JSON(JSONType type) : type_(type) {}
-JSON::JSON(JSONType type, string value) : type_(type), value_(value) {}
+JSON::JSON(JSONType type, std::string_view value = "")
+  : type_(type), value_(value) {}
 
-void JSON::print() const { cout << "type: " << toString(); }
+void JSON::print() const { std::cout << "type: " << to_string(); }
 
-float JSON::asNumber() const {
-  if (type_ != Number)
-    throw 1;
-  return stof(value_);
+std::optional<float> JSON::as_number() const {
+  if (type_ == Number)
+    return stof(value_);
 }
 
-string JSON::asString() const {
-  if (type_ != String)
-    throw 1;
-  return value_;
+constexpr std::optional<std::string_view>> JSON::as_string() const {
+  if (type_ == String)
+    return value_;
 }
 
-string JSON::toString() const {
-  string out = "";
+constexpr std::string_view JSON::to_string() const noexcept {
+  std::string out;
 
   switch (type_) {
   case String:
@@ -50,8 +46,6 @@ string JSON::toString() const {
     break;
   }
 
-  out += ": " + getValue();
-
-  return out;
+  return out + ": " + get_value();
 }
 } // namespace picoJSON

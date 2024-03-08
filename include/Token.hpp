@@ -2,7 +2,7 @@
 #define TOKEN_HPP
 
 namespace picoJSON {
-enum Token {
+enum class Token {
   WHITESPACE,
   COLON,
   COMMA,

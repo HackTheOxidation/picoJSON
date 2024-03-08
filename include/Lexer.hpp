@@ -5,20 +5,18 @@
 #include "Reader.hpp"
 #include "Token.hpp"
 #include <iostream>
+#include <string>
 #include <vector>
-
-using namespace std;
 
 namespace picoJSON {
 
 class Lexer {
 public:
-  Lexer(string json);
-
-  vector<pair<Token, string> *> *tokenize();
+  Lexer(const std::string json);
+  std::vector<std::pair<Token, std::string>> tokenize();
 
 private:
-  string json_;
+  std::string json_;
 };
 
 } // namespace picoJSON

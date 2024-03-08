@@ -1,30 +1,28 @@
 #include <Lexer.hpp>
 
-using namespace std;
-
 namespace picoJSON {
-Lexer::Lexer(string json) : json_(json) { tokenize(); }
+Lexer::Lexer(const std::string json) : json_(json) { tokenize(); }
 
-vector<pair<Token, string> *> *Lexer::tokenize() {
-  vector<pair<Token, string> *> *tokens = new vector<pair<Token, string> *>();
+std::vector<pair<Token, std::string>> Lexer::tokenize() {
+  std::vector<pair<Token, std::string>> tokens{};
 
   unsigned int line = 1;
-  bool isString = false;
-  bool isNumber = false;
-  bool isBool = false;
-  bool isNull = false;
+  bool is_string = false;
+  bool is_number = false;
+  bool is_bool = false;
+  bool is_null = false;
   bool decimal = false;
   bool exponent = false;
-  string buffer = "";
+  std::string buffer = "";
   for (char c : json_) {
     if (c == EOF)
       break;
     else if (c == '{') {
-      if (isString)
+      if (is_string)
         buffer += c;
       else {
         buffer = c;
-        tokens->push_back(new pair<Token, string>(LCURLY, buffer));
+        tokens->push_back(std::pair<Token, string>(LCURLY, buffer));
         buffer = "";
         line++;
       }

@@ -9,32 +9,33 @@
 #include "Lexer.hpp"
 #include "Reader.hpp"
 #include <iostream>
+#include <memory>
+#include <optional>
+#include <string>
 #include <vector>
-
-using namespace std;
 
 namespace picoJSON {
 
 class Parser {
 public:
-  Parser(string fileName);
-  Parser(vector<pair<Token, string> *> *tokens);
-  Content getContent();
-  vector<pair<Token, string> *> *getTokens() const;
-  void printTokens() const;
+  Parser(const std::string file_name);
+  Parser(std::vector<std::pair<Token, std::string>> tokens);
+  std::optional<Content> get_content();
+  std::vector<std::pair<Token, std::string>> get_tokens() const;
+  void print_tokens() const;
   void print() const;
 
 private:
-  vector<pair<Token, string> *> *tokens_;
-  pair<Token, string> *currentTokenPair_;
+  std::vector<std::shared_ptr<std::pair<Token, std::string>>> tokens_;
+  std::shared_ptr<std::pair<Token, std::string>> current_token_pair_;
   long unsigned int index_;
 
-  JSON *parseJSON();
-  JSON *parse();
-  JSON *parseValue();
-  JSON *parseObject();
-  JSON *parseArray();
-  JSONProperty *parseProperty();
+  std::optional<JSON> parse_JSON();
+  std::optional<JSON> parse();
+  std::optional<JSON> parse_value();
+  std::optional<JSON> parse_object();
+  std::optional<JSON> parse_array();
+  std::optional<JSONProperty> parse_property();
   void advance();
 };
 } // namespace picoJSON

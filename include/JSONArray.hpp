@@ -2,24 +2,20 @@
 #define JSONARRAY_HPP
 
 #include "JSON.hpp"
+#include <string>
 #include <vector>
-
-using namespace std;
 
 namespace picoJSON {
 
 class JSONArray : public JSON {
 public:
-  JSONArray(JSONType type, vector<JSON *> *value);
-
-  vector<JSON *> *getValue() const;
-
-  string toString() const;
-
+  JSONArray(const JSONType type, std::vector<JSON> value);
+  std::vector<JSON> get_value() const;
+  std::string to_string() const;
   void print() const;
 
 private:
-  vector<JSON *> *value_;
+  std::vector<JSON> value_;
 };
 } // namespace picoJSON
 

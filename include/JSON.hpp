@@ -1,37 +1,39 @@
 #ifndef JSON_HPP_
 #define JSON_HPP_
 
+#include <cstddef>
 #include <iostream>
-
-using namespace std;
+#include <optional>
 
 namespace picoJSON {
 
-enum JSONType { Bool, String, Number, Null, Array, Object };
+enum class JSONType { Bool, String, Number, Null, Array, Object };
+
+class JSONArray;
+class JSONObject;
 
 class JSON {
 private:
-  JSONType type_;
-  string value_;
+  const JSONType type_;
+  const std::string_view value_;
 
 public:
-  JSON(JSONType);
-  JSON(JSONType, string);
+  JSON(JSONType, std::string_view = "");
   void print() const;
-  virtual ~JSON() {}
-  virtual string toString() const;
+  virtual ~JSON() = 0;
+  constexpr std::string_view to_string() const noexcept;
 
-  JSONType getType() const { return type_; }
-  string asString() const;
-  float asNumber() const;
-  bool asBool() const;
-  int asNull() const;
-  JSON asArray() const;
-  JSON asObject() const;
-  string getValue() const { return value_; }
+  JSONType get_type() const { return type_; }
+  constexpr std::optional<std::string_view> as_string() const;
+  std::optional<float> as_number() const;
+  std::optional<bool> as_bool() const;
+  std::optional<std::nullptr_t> as_null() const;
+  std::optional<JSONArray> as_array() const;
+  std::optional<JSONObject> as_object() const;
+  constexpr std::string_view get_value() const { return value_; }
 
-  friend ostream &operator<<(ostream &out, JSON &json) {
-    out << json.toString();
+  friend std::ostream &operator<<(std::ostream &out, JSON &json) {
+    out << json.to_string();
     return out;
   }
 };

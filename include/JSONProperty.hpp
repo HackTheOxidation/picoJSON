@@ -3,29 +3,24 @@
 
 #include "JSON.hpp"
 #include <iostream>
-
-using namespace std;
+#include <memory>
 
 namespace picoJSON {
 
 class JSONProperty {
 private:
-  string key_;
-  JSON *value_;
+  const std::string_view key_;
+  std::shared_ptr<JSON> value_;
 
 public:
-  JSONProperty(string key, JSON *value);
+  JSONProperty(const std::string_view key, JSON value);
+  void print() const noexcept;
+  std::string_view to_string() const noexcept;
+  const std::string_view get_key() const noexcept;
+  std::shared_ptr<JSON> get_value();
 
-  void print() const;
-
-  string toString() const;
-
-  string getKey() const;
-
-  JSON *getValue();
-
-  friend ostream &operator<<(ostream &out, JSONProperty &prop) {
-    out << prop.toString();
+  friend std::ostream &operator<<(std::ostream &out, JSONProperty &prop) {
+    out << prop.to_string();
     return out;
   }
 };

@@ -3,77 +3,56 @@
 #include <JSONObject.hpp>
 #include <JSONProperty.hpp>
 #include <exception>
+#include <optional>
 #include <stdexcept>
 #include <string>
 
 namespace picoJSON {
 
-vector<JSONProperty *> Content::getProperties() const { return *properties_; }
-
-Content::Content(vector<JSONProperty *> *properties)
-    : properties_(properties) {}
-
-bool Content::search(string key) const {
-  for (JSONProperty *prop : *properties_) {
-    if (prop->getKey().compare(key) == 0) {
-      return true;
-    }
+  std::vector<JSONProperty> Content::get_properties() const noexcept {
+    return properties_;
   }
 
-  return false;
-}
-
-bool Content::search(string key, JSONType &type) const {
-  for (JSONProperty *prop : *properties_) {
-    if (prop->getKey().compare(key) == 0) {
-      type = prop->getValue()->getType();
-      return true;
-    }
-  }
-  return false;
-}
-
-JSON &Content::getValue(string key) const {
-  if (!search(key))
-    throw 1;
-  JSONProperty *prop = getProperty(key);
-
-  switch (prop->getValue()->getType()) {
-  case Array:
-    return *static_cast<JSONArray *>(prop->getValue());
-  case Object:
-    return *static_cast<JSONObject *>(prop->getValue());
-  }
-
-  return *prop->getValue();
-}
-
-JSON &Content::operator[](std::string key) { return getValue(key); }
-
-JSON Content::operator[](std::string key) const {
-  JSONProperty *prop = getProperty(key);
-  if (prop == nullptr)
-    throw out_of_range("");
-
-  return (*prop->getValue());
-}
-
-void Content::print() const {
-  cout << "{" << endl;
-  for (JSONProperty *prop : *properties_) {
-    cout << "\t";
-    prop->print();
-    cout << "," << endl;
-  }
-  cout << "}" << endl;
-}
-
-JSONProperty* Content::getProperty(string key) const {
-  for (JSONProperty *prop : *properties_) {
-    if (prop->getKey().compare(key) == 0)
-      return prop;
+  bool Content::search(std::string key) const noexcept {
+    for (const JSONProperty prop : properties_) {
+      if (prop.get_key() == key) {
+        return true;
+      }
     }
 
-    return nullptr;
-}
+    return false;
+  }
+
+  bool Content::search(std::string key, const JSONType type) const noexcept {
+    for (const JSONProperty prop : properties_) {
+      if (prop.get_key() == key && prop.get_value().get_type()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  std::optional<JSON> Content::get_value(std::string key) const noexcept {
+    for (const JSONProperty prop : properties_) {
+      if (prop.get_key() == key) {
+        return prop.get_value();
+      }
+    }
+
+    return std::nullopt;
+  }
+
+  std::optional<JSON> Content::operator[](std::string key) {
+    return get_value(key);
+  }
+
+  void Content::print() const noexcept {
+    cout << "{" << endl;
+    for (const JSONProperty prop : properties_) {
+      cout << "\t";
+      prop.print();
+      cout << "," << endl;
+    }
+    cout << "}" << endl;
+  }
 } // namespace picoJSON

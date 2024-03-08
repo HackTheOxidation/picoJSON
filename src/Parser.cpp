@@ -6,24 +6,22 @@ using namespace std;
 
 namespace picoJSON {
 
-Parser::Parser(string fileName) {
-  Reader reader(fileName);
-  Lexer lexer(reader.getContent());
-  tokens_ = lexer.tokenize();
-  currentTokenPair_ = nullptr;
-  index_ = 0;
-}
-
-Parser::Parser(vector<pair<Token, string> *> *tokens)
-    : tokens_(tokens), currentTokenPair_(nullptr), index_(0) {}
-
-JSON *Parser::parseJSON() {
-  if (!tokens_->empty()) {
-    return parse();
-  } else {
-    return nullptr;
+  Parser::Parser(const std::string file_name) {
+    Reader reader(file_name);
+    Lexer lexer(reader.get_content());
+    tokens_ = lexer.tokenize();
+    current_token_pair_ = nullptr;
+    index_ = 0;
   }
-}
+
+  Parser::Parser(std::vector<std::pair<Token, string>> tokens)
+    : tokens_(tokens), current_token_pair_(nullptr), index_(0) {}
+
+  std::optional<JSON> Parser::parse_JSON() {
+    if (!tokens.empty()) {
+      return parse();
+    }
+  }
 
 JSON *Parser::parse() {
   this->advance();
@@ -34,52 +32,50 @@ JSON *Parser::parse() {
   }
 }
 
-JSON *Parser::parseValue() {
-  Token tok = currentTokenPair_->first;
+  std::optional<JSON> Parser::parse_value() {
+    const auto [tok, value] = *current_token_pair_;
 
-  switch (tok) {
-  case LCURLY:
-    return parseObject();
-  case LBRACE:
-    return parseArray();
-  case JSONTRUE:
-    return new JSON(Bool, currentTokenPair_->second);
-  case JSONFALSE:
-    return new JSON(Bool, currentTokenPair_->second);
-  case JSONNULL:
-    return new JSON(Null, currentTokenPair_->second);
-  case STRING:
-    return new JSON(String, currentTokenPair_->second);
-  case NUMBER:
-    return new JSON(Number, currentTokenPair_->second);
-  default:
-    break;
+    switch (tok) {
+    case LCURLY:
+      return parseObject();
+    case LBRACE:
+      return parseArray();
+    case JSONTRUE:
+      return JSON(Bool, value);
+    case JSONFALSE:
+      return JSON(Bool, value);
+    case JSONNULL:
+      return JSON(Null, value);
+    case STRING:
+      return JSON(String, value);
+    case NUMBER:
+      return JSON(Number, value);
+    default:
+      break;
+    }
   }
 
-  throw ParserException("");
-}
+  std::optional<JSON> Parser::parse_object() {
+    std::vector<JSONProperty> properties;
+    advance();
 
-JSON *Parser::parseObject() {
-  vector<JSONProperty *> *properties = new vector<JSONProperty *>();
-  advance();
+    do {
+      if (current_token_pair_ == nullptr)
+        throw ParserException("");
 
-  do {
-    if (currentTokenPair_ == nullptr)
-      throw ParserException("");
+      switch (currentTokenPair_.first) {
+      case RCURLY:
+        return JSONObject(Object, properties);
+      case COMMA:
+        advance();
+      default:
+        properties.push_back(parse_property());
+        advance();
+      }
+    } while (currentTokenPair_ != nullptr);
 
-    switch (currentTokenPair_->first) {
-    case RCURLY:
-      return new JSONObject(Object, properties);
-    case COMMA:
-      advance();
-    default:
-      properties->push_back(parseProperty());
-      advance();
-    }
-  } while (currentTokenPair_ != nullptr);
-
-  throw ParserException("");
-}
+    throw ParserException("");
+  }
 
 JSON *Parser::parseArray() {
   vector<JSON *> *array = new vector<JSON *>();
@@ -134,6 +130,7 @@ void Parser::advance() {
 }
 
 Content Parser::getContent() {
+  parse_JSON().and_then
   try {
     JSON *json = parseJSON();
     JSONObject *obj = static_cast<JSONObject *>(json);
@@ -143,89 +140,84 @@ Content Parser::getContent() {
   }
 }
 
-vector<pair<Token, string> *> *Parser::getTokens() const { return tokens_; }
+  std::vector<std::pair<Token, string>> Parser::get_tokens() const { return tokens_; }
 
-void Parser::printTokens() const {
-  for (pair<Token, string> *p : *tokens_) {
-    cout << "type: ";
-    switch (p->first) {
+void Parser::print_tokens() const {
+  for (const [token, value] : tokens_) {
+    std::cout << "type: ";
+    switch (token) {
     case STRING:
-      cout << "STRING, ";
+      std::cout << "STRING, ";
       break;
     case NUMBER:
-      cout << "NUMBER, ";
+      std::cout << "NUMBER, ";
       break;
     case WHITESPACE:
-      cout << "WHITESPACE, ";
+      std::cout << "WHITESPACE, ";
       break;
     case COLON:
-      cout << "COLON, ";
+      std::cout << "COLON, ";
       break;
     case COMMA:
-      cout << "COMMA, ";
+      std::cout << "COMMA, ";
       break;
     case LPAREN:
-      cout << "LPAREN, ";
+      std::cout << "LPAREN, ";
       break;
     case RPAREN:
-      cout << "RPAREN, ";
+      std::cout << "RPAREN, ";
       break;
     case LBRACE:
-      cout << "LBRACE, ";
+      std::cout << "LBRACE, ";
       break;
     case RBRACE:
-      cout << "RBRACE, ";
+      std::cout << "RBRACE, ";
       break;
     case LCURLY:
-      cout << "LCURLY, ";
+      std::cout << "LCURLY, ";
       break;
     case RCURLY:
-      cout << "RCURLY, ";
+      std::cout << "RCURLY, ";
       break;
     case JSONTRUE:
-      cout << "JSONTRUE, ";
+      std::cout << "JSONTRUE, ";
       break;
     case JSONFALSE:
-      cout << "JSONFALSE, ";
+      std::cout << "JSONFALSE, ";
       break;
     case JSONNULL:
-      cout << "JSONNULL, ";
+      std::cout << "JSONNULL, ";
       break;
     }
 
-    cout << "value: " << p->second << endl;
+    sdt::cout << "value: " << value << '\n';
   }
 }
 
 void Parser::print() const {
-  for (pair<Token, string> *p : *tokens_) {
-    string tok = "";
-    switch (p->first) {
+  for (const auto [token, value] : tokens_) {
+    switch (token) {
     case STRING:
-      tok = "STRING ";
+      std::cout << "STRING ";
       break;
     case NUMBER:
-      tok = "NUMBER ";
+      std::cout << "NUMBER ";
       break;
     case JSONTRUE:
-      tok = "JSONTRUE ";
+      std::cout << "JSONTRUE ";
       break;
     case JSONFALSE:
-      tok = "JSONFALSE ";
+      std::cout << "JSONFALSE ";
       break;
     case JSONNULL:
-      tok = "JSONNULL ";
+      std::cout << "JSONNULL ";
       break;
     case WHITESPACE:
       continue;
     default:
       break;
     }
-
-    if (tok != "") {
-      cout << tok;
-    }
-    cout << p->second << " ";
+    std::cout << value << " ";
   }
 }
 

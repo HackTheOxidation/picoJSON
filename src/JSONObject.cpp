@@ -1,20 +1,16 @@
 #include <JSONObject.hpp>
 
-using namespace std;
-
 namespace picoJSON {
-JSONObject::JSONObject(JSONType type, vector<JSONProperty *> *value)
+  JSONObject::JSONObject(const JSONType type, std::vector<JSONProperty> value)
     : JSON(type), value_(value) {}
 
-vector<JSONProperty *> *JSONObject::getValue() const { return value_; }
+  std::vector<JSONProperty> JSONObject::get_value() const { return value_; }
 
-string JSONObject::toString() const {
-  string out = "{ ";
-  for (JSONProperty *prop : *value_) {
-    out += prop->toString();
-    out += " ";
+  std::string JSONObject::to_string() const {
+    std::string out = "{ ";
+    for (const JSONProperty prop : value_) {
+      out += prop->toString() + " ";
+    }
+    return out + " }";
   }
-  out += " }";
-  return out;
-}
 } // namespace picoJSON

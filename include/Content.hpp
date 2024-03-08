@@ -7,27 +7,28 @@
 #include "JSONProperty.hpp"
 #include <exception>
 #include <iostream>
+#include <memory>
+#include <optional>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
-using namespace std;
 
 namespace picoJSON {
 
 class Content {
-private:
-  vector<JSONProperty *> *properties_;
-  JSONProperty *getProperty(string key) const;
-
 public:
-  Content(vector<JSONProperty *> *properties);
-  vector<JSONProperty *> getProperties() const;
-  bool search(string key) const;
-  bool search(string key, JSONType &type) const;
-  JSON &getValue(string key) const;
-  JSON &operator[](string key);
-  JSON operator[](string key) const;
-  void print() const;
+  Content(const std::vector<JSONProperty>& properties)
+    : properties_(properties) {}
+  std::vector<JSONProperty> get_properties() const noexcept;
+  bool search(std::string key) const noexcept;
+  bool search(std::string key, const JSONType type) const noexcept;
+  std::optional<JSON> get_value(std::string key) const noexcept;
+  std::optional<JSON> operator[](std::string key) const noexcept;
+  void print() const noexcept;
+  
+private:
+  std::vector<JSONProperty> properties_;
 };
 } // namespace picoJSON
 

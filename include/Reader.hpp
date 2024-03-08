@@ -4,21 +4,22 @@
 #include "Token.hpp"
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <string_view>
 
-using namespace std;
 
 namespace picoJSON {
-const string Whitespace = "\r\n\t ";
-const string Digits = "1234567890";
+const std::string_view Whitespace = "\r\n\t ";
+const std::string_view Digits = "1234567890";
 
 class Reader {
 public:
-  Reader(string fileName);
+  Reader(std::string file_name);
 
-  string getContent() const;
+  std::string get_content() const;
 
 private:
-  string fileName_;
+  std::string file_name_;
 };
 } // namespace picoJSON
 

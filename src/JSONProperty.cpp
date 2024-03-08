@@ -1,24 +1,23 @@
 #include <JSON.hpp>
 #include <JSONProperty.hpp>
-
-using namespace std;
+#include <string_view>
 
 namespace picoJSON {
-JSONProperty::JSONProperty(string key, JSON *value)
+  JSONProperty::JSONProperty(const std::string_view key, JSON value)
     : key_(key), value_(value) {}
 
-void JSONProperty::print() const {
-  cout << key_ << " : " << value_->toString();
-}
+  void JSONProperty::print() const noexcept {
+    std::cout << key_ << " : " << value_.to_string();
+  }
 
-string JSONProperty::toString() const {
-  string out = key_;
-  out += " : ";
-  out += value_->getValue();
-  return out;
-}
+  std::string_view JSONProperty::to_string() const noexcept {
+    std::string out = key_;
+    out += " : ";
+    out += value_->getValue();
+    return out;
+  }
 
-string JSONProperty::getKey() const { return key_; }
+  const std::string_view JSONProperty::get_key() const noexcept { return key_; }
 
-JSON *JSONProperty::getValue() { return value_; }
+  JSON *JSONProperty::get_value() { return value_; }
 } // namespace picoJSON

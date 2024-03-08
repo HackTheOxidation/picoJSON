@@ -5,20 +5,16 @@
 #include "JSONProperty.hpp"
 #include <vector>
 
-using namespace std;
-
 namespace picoJSON {
 
 class JSONObject : public JSON {
 public:
-  JSONObject(JSONType type, vector<JSONProperty *> *value);
-
-  vector<JSONProperty *> *getValue() const;
-
-  string toString() const;
+  JSONObject(const JSONType type, std::vector<JSONProperty> value);
+  std::vector<JSONProperty> get_value() const;
+  std::string to_string() const;
 
 private:
-  vector<JSONProperty *> *value_;
+  std::vector<JSONProperty> value_;
 };
 } // namespace picoJSON
 
