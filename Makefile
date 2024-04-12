@@ -1,6 +1,6 @@
 SOURCES=src/*.cpp
 CXX=clang++
-CXXFLAGS = -fPIC -shared -I./include/ -pedantic -Wall
+CXXFLAGS = -std=c++23 -fPIC -shared -I./include/ -pedantic -Wall
 LIB=libpicoJSON.so
 TEST_SOURCES=tests/tester.cpp
 TEST=tests/tester

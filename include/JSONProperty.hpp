@@ -17,7 +17,7 @@ public:
   void print() const noexcept;
   std::string_view to_string() const noexcept;
   const std::string_view get_key() const noexcept;
-  std::shared_ptr<JSON> get_value();
+  std::shared_ptr<JSON> get_value() const;
 
   friend std::ostream &operator<<(std::ostream &out, JSONProperty &prop) {
     out << prop.to_string();

@@ -1,191 +1,190 @@
 #include <JSONProperty.hpp>
 #include <Parser.hpp>
+#include <Token.hpp>
 #include <iterator>
+#include <optional>
 
 using namespace std;
 
 namespace picoJSON {
 
-  Parser::Parser(const std::string file_name) {
-    Reader reader(file_name);
-    Lexer lexer(reader.get_content());
-    tokens_ = lexer.tokenize();
-    current_token_pair_ = nullptr;
-    index_ = 0;
-  }
+Parser::Parser(const std::string file_name) {
+  Reader reader(file_name);
+  Lexer lexer(reader.get_content());
+  tokens_ = lexer.tokenize();
+  current_token_pair_ = nullptr;
+  index_ = 0;
+}
 
-  Parser::Parser(std::vector<std::pair<Token, string>> tokens)
+Parser::Parser(std::vector<std::pair<Token, string>> tokens)
     : tokens_(tokens), current_token_pair_(nullptr), index_(0) {}
 
-  std::optional<JSON> Parser::parse_JSON() {
-    if (!tokens.empty()) {
-      return parse();
-    }
-  }
-
-JSON *Parser::parse() {
-  this->advance();
-  try {
-    return parseValue();
-  } catch (ParserException e) {
-    throw ParserException("");
+std::optional<JSON> Parser::parse_JSON() {
+  if (!tokens_.empty()) {
+    return parse();
   }
 }
 
-  std::optional<JSON> Parser::parse_value() {
-    const auto [tok, value] = *current_token_pair_;
+std::optional<JSON> Parser::parse() {
+  advance();
+  return parse_value();
+}
 
-    switch (tok) {
-    case LCURLY:
-      return parseObject();
-    case LBRACE:
-      return parseArray();
-    case JSONTRUE:
-      return JSON(Bool, value);
-    case JSONFALSE:
-      return JSON(Bool, value);
-    case JSONNULL:
-      return JSON(Null, value);
-    case STRING:
-      return JSON(String, value);
-    case NUMBER:
-      return JSON(Number, value);
-    default:
-      break;
-    }
+std::optional<JSON> Parser::parse_value() {
+  const auto [tok, value] = *current_token_pair_;
+
+  switch (tok) {
+  case Token::LCURLY:
+    return parse_object();
+  case Token::LBRACE:
+    return parse_array();
+  case Token::JSONTRUE:
+    return JSON(Bool, value);
+  case Token::JSONFALSE:
+    return JSON(Bool, value);
+  case Token::JSONNULL:
+    return JSON(Null, value);
+  case Token::STRING:
+    return JSON(String, value);
+  case Token::NUMBER:
+    return JSON(Number, value);
+  default:
+    break;
   }
+}
 
-  std::optional<JSON> Parser::parse_object() {
-    std::vector<JSONProperty> properties;
-    advance();
-
-    do {
-      if (current_token_pair_ == nullptr)
-        throw ParserException("");
-
-      switch (currentTokenPair_.first) {
-      case RCURLY:
-        return JSONObject(Object, properties);
-      case COMMA:
-        advance();
-      default:
-        properties.push_back(parse_property());
-        advance();
-      }
-    } while (currentTokenPair_ != nullptr);
-
-    throw ParserException("");
-  }
-
-JSON *Parser::parseArray() {
-  vector<JSON *> *array = new vector<JSON *>();
+std::optional<JSON> Parser::parse_object() {
+  std::vector<JSONProperty> properties;
   advance();
 
   do {
-    if (currentTokenPair_ == nullptr)
-      throw ParserException("");
+    if (current_token_pair_ == nullptr)
+      return std::nullopt;
 
-    switch (currentTokenPair_->first) {
+    switch (current_token_pair_.first) {
+    case Token::RCURLY:
+      return JSONObject(JSONType::Object, properties);
+    case Token::COMMA:
+      advance();
+    default:
+      auto prop = parse_property();
+      if (!prop.has_value())
+        return std::nullopt;
+      properties.push_back(prop.value());
+      advance();
+    }
+  } while (current_token_pair_ != nullptr);
+
+  return std::nullopt;
+}
+
+std::optional<JSON> Parser::parse_array() {
+  std::vector<std::shared_ptr<JSON>> array;
+  advance();
+
+  do {
+    if (current_token_pair_ == nullptr)
+      return std::nullopt;
+
+    switch (current_token_pair_->first) {
     case RBRACE:
-      return new JSONArray(Array, array);
+      return JSONArray(Array, array);
     case COMMA:
       advance();
     default:
-      array->push_back(parseValue());
+      auto value = parse_value();
+      if (!value.has_value())
+        return std::nullopt;
+      array.push_back(value.value());
       advance();
     }
-  } while (currentTokenPair_ != nullptr);
+  } while (current_token_pair_ != nullptr);
 
-  throw ParserException("");
+  return std::nullopt;
 }
 
-JSONProperty *Parser::parseProperty() {
-  if (currentTokenPair_ == nullptr)
-    throw ParserException("");
+std::optional<JSONProperty> Parser::parse_property() {
+  if (current_token_pair_ == nullptr)
+    return std::nullopt;
 
-  switch (currentTokenPair_->first) {
-  case STRING: {
-    string str = currentTokenPair_->second;
+  const auto [first, second] = *current_token_pair_;
+  switch (first) {
+  case Token::STRING: {
     advance();
-    if (currentTokenPair_->first == COLON) {
+    if (first == Token::COLON) {
       advance();
-      return new JSONProperty(str, parseValue());
-    } else
-      throw ParserException("");
+      return parse_value().and_then([second](auto value) { return JSONProperty(second, value); });
+    }
   }
   default:
     break;
   }
-
-  throw ParserException("");
 }
 
 void Parser::advance() {
   if (index_ < tokens_->size()) {
-    currentTokenPair_ = tokens_->at(index_);
+    current_token_pair_ = tokens_->at(index_);
     index_++;
   } else {
-    currentTokenPair_ = nullptr;
+    current_token_pair_ = nullptr;
   }
 }
 
-Content Parser::getContent() {
-  parse_JSON().and_then
-  try {
-    JSON *json = parseJSON();
-    JSONObject *obj = static_cast<JSONObject *>(json);
-    return *(new Content(obj->getValue()));
-  } catch (ParserException e) {
-    return *(new Content(nullptr));
-  }
+std::optional<Content> Parser::get_content() {
+  parse_JSON().and_then([](auto json) {
+    JSONObject obj = JSONObject(json);
+    return obj.get_value().and_then([](auto value) { return Content(value); });
+  });
 }
 
-  std::vector<std::pair<Token, string>> Parser::get_tokens() const { return tokens_; }
+std::vector<std::pair<Token, string>> Parser::get_tokens() const {
+  return tokens_;
+}
 
 void Parser::print_tokens() const {
-  for (const [token, value] : tokens_) {
+  for (const[token, value] : tokens_) {
     std::cout << "type: ";
     switch (token) {
-    case STRING:
+    case Token::STRING:
       std::cout << "STRING, ";
       break;
-    case NUMBER:
+    case Token::NUMBER:
       std::cout << "NUMBER, ";
       break;
-    case WHITESPACE:
+    case Token::WHITESPACE:
       std::cout << "WHITESPACE, ";
       break;
-    case COLON:
+    case Token::COLON:
       std::cout << "COLON, ";
       break;
-    case COMMA:
+    case Token::COMMA:
       std::cout << "COMMA, ";
       break;
-    case LPAREN:
+    case Token::LPAREN:
       std::cout << "LPAREN, ";
       break;
-    case RPAREN:
+    case Token::RPAREN:
       std::cout << "RPAREN, ";
       break;
-    case LBRACE:
+    case Token::LBRACE:
       std::cout << "LBRACE, ";
       break;
-    case RBRACE:
+    case Token::RBRACE:
       std::cout << "RBRACE, ";
       break;
-    case LCURLY:
+    case Token::LCURLY:
       std::cout << "LCURLY, ";
       break;
-    case RCURLY:
+    case Token::RCURLY:
       std::cout << "RCURLY, ";
       break;
-    case JSONTRUE:
+    case Token::JSONTRUE:
       std::cout << "JSONTRUE, ";
       break;
-    case JSONFALSE:
+    case Token::JSONFALSE:
       std::cout << "JSONFALSE, ";
       break;
-    case JSONNULL:
+    case Token::JSONNULL:
       std::cout << "JSONNULL, ";
       break;
     }

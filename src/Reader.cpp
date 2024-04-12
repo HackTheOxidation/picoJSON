@@ -3,17 +3,17 @@
 using namespace std;
 
 namespace picoJSON {
-Reader::Reader(string fileName) : fileName_(fileName) {}
+Reader::Reader(std::string file_name) : file_name_(file_name) {}
 
-string Reader::getContent() const {
-  string content = "";
-  fstream file;
-  file.open(fileName_);
+std::string Reader::get_content() const {
+  std::string content = "";
+  std::fstream file;
+  file.open(file_name_);
 
   if (!file.is_open())
     throw exception();
 
-  string temp = "";
+  std::string temp = "";
   while (getline(file, temp))
     content.append(temp);
 

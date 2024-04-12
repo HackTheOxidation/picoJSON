@@ -1,4 +1,5 @@
 #include <JSON.hpp>
+#include <Tokens.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -6,7 +7,7 @@
 namespace picoJSON {
 
 JSON::JSON(JSONType type, std::string_view value = "")
-  : type_(type), value_(value) {}
+    : type_(type), value_(value) {}
 
 void JSON::print() const { std::cout << "type: " << to_string(); }
 
@@ -15,7 +16,7 @@ std::optional<float> JSON::as_number() const {
     return stof(value_);
 }
 
-constexpr std::optional<std::string_view>> JSON::as_string() const {
+constexpr std::optional<std::string_view> JSON::as_string() const {
   if (type_ == String)
     return value_;
 }

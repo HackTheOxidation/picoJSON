@@ -19,5 +19,5 @@ namespace picoJSON {
 
   const std::string_view JSONProperty::get_key() const noexcept { return key_; }
 
-  JSON *JSONProperty::get_value() { return value_; }
+  std::shared_ptr<JSON> JSONProperty::get_value() const { return value_; }
 } // namespace picoJSON

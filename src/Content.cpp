@@ -14,7 +14,7 @@ namespace picoJSON {
   }
 
   bool Content::search(std::string key) const noexcept {
-    for (const JSONProperty prop : properties_) {
+    for (const JSONProperty& prop : properties_) {
       if (prop.get_key() == key) {
         return true;
       }
@@ -24,7 +24,7 @@ namespace picoJSON {
   }
 
   bool Content::search(std::string key, const JSONType type) const noexcept {
-    for (const JSONProperty prop : properties_) {
+    for (const JSONProperty& prop : properties_) {
       if (prop.get_key() == key && prop.get_value().get_type()) {
         return true;
       }
@@ -33,7 +33,7 @@ namespace picoJSON {
   }
 
   std::optional<JSON> Content::get_value(std::string key) const noexcept {
-    for (const JSONProperty prop : properties_) {
+    for (const JSONProperty& prop : properties_) {
       if (prop.get_key() == key) {
         return prop.get_value();
       }
@@ -42,17 +42,17 @@ namespace picoJSON {
     return std::nullopt;
   }
 
-  std::optional<JSON> Content::operator[](std::string key) {
+  std::optional<JSON> Content::operator[](std::string key) const noexcept {
     return get_value(key);
   }
 
   void Content::print() const noexcept {
-    cout << "{" << endl;
-    for (const JSONProperty prop : properties_) {
-      cout << "\t";
+    std::cout << "{" << std::endl;
+    for (const JSONProperty& prop : properties_) {
+      std::cout << "\t";
       prop.print();
-      cout << "," << endl;
+      std::cout << "," << std::endl;
     }
-    cout << "}" << endl;
+    std::cout << "}" << std::endl;
   }
 } // namespace picoJSON
