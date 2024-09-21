@@ -7,10 +7,10 @@ namespace picoJSON {
   std::vector<JSON> JSONArray::get_value() const { return value_; }
 
   std::string JSONArray::to_string() const {
-    string out = "[ ";
+    std::string out = "[ ";
 
     for (const JSON json : value_) {
-      out += json->to_string() + " ";
+      out += std::string(json.to_string()) + " ";
     }
     return out + "]";
   }

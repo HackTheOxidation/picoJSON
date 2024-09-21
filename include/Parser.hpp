@@ -5,7 +5,6 @@
 #include "JSON.hpp"
 #include "JSONArray.hpp"
 #include "JSONObject.hpp"
-#include "JSONProperty.hpp"
 #include "Lexer.hpp"
 #include "Reader.hpp"
 #include <iostream>
@@ -35,7 +34,6 @@ private:
   std::optional<JSON> parse_value();
   std::optional<JSON> parse_object();
   std::optional<JSON> parse_array();
-  std::optional<JSONProperty> parse_property();
   void advance();
 };
 } // namespace picoJSON

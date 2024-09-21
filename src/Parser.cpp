@@ -1,4 +1,3 @@
-#include <JSONProperty.hpp>
 #include <Parser.hpp>
 #include <Token.hpp>
 #include <iterator>

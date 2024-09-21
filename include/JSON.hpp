@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 #include <optional>
+#include <string_view>
 
 namespace picoJSON {
 
@@ -20,7 +21,6 @@ private:
 public:
   JSON(JSONType, std::string_view = "");
   void print() const;
-  virtual ~JSON() = 0;
   constexpr std::string_view to_string() const noexcept;
 
   JSONType get_type() const { return type_; }

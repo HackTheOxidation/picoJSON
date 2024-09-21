@@ -1,21 +1,21 @@
 #include <Content.hpp>
 #include <JSONArray.hpp>
 #include <JSONObject.hpp>
-#include <JSONProperty.hpp>
 #include <exception>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 
 namespace picoJSON {
 
-  std::vector<JSONProperty> Content::get_properties() const noexcept {
+  std::unordered_map<std::string, JSON> Content::get_properties() const noexcept {
     return properties_;
   }
 
   bool Content::search(std::string key) const noexcept {
-    for (const JSONProperty& prop : properties_) {
-      if (prop.get_key() == key) {
+    for (const auto& [k, _] : properties_) {
+      if (k == key) {
         return true;
       }
     }
@@ -24,8 +24,8 @@ namespace picoJSON {
   }
 
   bool Content::search(std::string key, const JSONType type) const noexcept {
-    for (const JSONProperty& prop : properties_) {
-      if (prop.get_key() == key && prop.get_value().get_type()) {
+    for (const auto& [k, v] : properties_) {
+      if (k == key && v.get_type() == type) {
         return true;
       }
     }
@@ -33,9 +33,9 @@ namespace picoJSON {
   }
 
   std::optional<JSON> Content::get_value(std::string key) const noexcept {
-    for (const JSONProperty& prop : properties_) {
-      if (prop.get_key() == key) {
-        return prop.get_value();
+    for (const auto& [k, v] : properties_) {
+      if (k == key) {
+        return v;
       }
     }
 
@@ -48,10 +48,8 @@ namespace picoJSON {
 
   void Content::print() const noexcept {
     std::cout << "{" << std::endl;
-    for (const JSONProperty& prop : properties_) {
-      std::cout << "\t";
-      prop.print();
-      std::cout << "," << std::endl;
+    for (const auto& [k, v] : properties_) {
+      std::cout << "\t" << k << ": " << v.to_string() << "," << std::endl;
     }
     std::cout << "}" << std::endl;
   }
