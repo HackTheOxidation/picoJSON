@@ -85,10 +85,10 @@ std::optional<JSON> Parser::parse_array() {
     if (current_token_pair_ == nullptr)
       return std::nullopt;
 
-    switch (current_token_pair_->first) {
-    case RBRACE:
-      return JSONArray(Array, array);
-    case COMMA:
+    switch (current_token_pair_.first) {
+    case Token::RBRACE:
+      return JSONArray(JSONType::Array, array);
+    case Token::COMMA:
       advance();
     default:
       auto value = parse_value();
@@ -121,8 +121,8 @@ std::optional<JSONProperty> Parser::parse_property() {
 }
 
 void Parser::advance() {
-  if (index_ < tokens_->size()) {
-    current_token_pair_ = tokens_->at(index_);
+  if (index_ < tokens_.size()) {
+    current_token_pair_ = tokens_.at(index_);
     index_++;
   } else {
     current_token_pair_ = nullptr;

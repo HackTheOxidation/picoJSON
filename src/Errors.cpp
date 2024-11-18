@@ -1,18 +1,21 @@
 #include <Errors.hpp>
+#include <sstream>
 #include <string>
+#include <string_view>
 
 namespace picoJSON {
 const std::string_view SyntaxException::message() const noexcept {
-  std::string error;
+  std::stringstream error;
 
   if (line_ != 0)
-    error += "At line: " + std::to_string(line_) + " -- ";
+    error << "At line: " + std::to_string(line_) + " -- ";
 
-  error += " ERROR Unexpected Token: \"" + std::string(msg_) + "\" .\n";
+  error << " ERROR Unexpected Token: \"" << msg_ << "\" .\n";
 
   if (suggestion_ != "")
-    error += "Did you mean: \"" + std::string(suggestion_) + "\"?\n";
-  return error;
+    error << "Did you mean: \"" << suggestion_ << "\"?\n";
+
+  return error.str();
 }
 
 } // namespace picoJSON

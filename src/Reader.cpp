@@ -1,13 +1,12 @@
 #include <Reader.hpp>
-
-using namespace std;
+#include <sstream>
 
 namespace picoJSON {
-Reader::Reader(std::string file_name) : file_name_(file_name) {}
+Reader::Reader(const std::string_view file_name) : file_name_(file_name) {}
 
-std::string Reader::get_content() const {
-  std::string content = "";
-  std::fstream file;
+std::stringstream Reader::get_content() const {
+  std::stringstream content;
+  std::ifstream file;
   file.open(file_name_);
 
   if (!file.is_open())
@@ -15,7 +14,7 @@ std::string Reader::get_content() const {
 
   std::string temp = "";
   while (getline(file, temp))
-    content.append(temp);
+    content << temp;
 
   file.close();
 

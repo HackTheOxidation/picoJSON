@@ -1,8 +1,10 @@
 #include <JSON.hpp>
 #include <Token.hpp>
 #include <iostream>
+#include <optional>
 #include <sstream>
 #include <string>
+#include <system_error>
 #include <utility>
 
 namespace picoJSON {
@@ -13,8 +15,12 @@ JSON::JSON(JSONType type, std::string_view value)
 void JSON::print() const { std::cout << "type: " << to_string(); }
 
 std::optional<float> JSON::as_number() const {
-  if (type_ == JSONType::Number)
-    return std::stof(value_);
+  float value{};
+  if (type_ == JSONType::Number &&
+      std::from_chars(value_.data(), value_.data() + value_.size(), value).ec == std::errc{}) {
+    return value;
+  }
+  return std::nullopt;
 }
 
 constexpr std::optional<std::string_view> JSON::as_string() const {
@@ -22,32 +28,9 @@ constexpr std::optional<std::string_view> JSON::as_string() const {
     return value_;
 }
 
-constexpr std::string_view JSON::to_string() const noexcept {
-  std::string out;
-
-  switch (type_) {
-    case JSONType::String:
-      out = "String";
-      break;
-    case JSONType::Number:
-      out = "Number";
-      break;
-    case JSONType::Null:
-      out = "Null";
-      break;
-    case JSONType::Bool:
-      out = "Bool";
-      break;
-    case JSONType::Array:
-      out = "Array";
-      break;
-    case JSONType::Object:
-      out = "Object";
-      break;
-    default:
-      break;
-  }
-
-  return out + ": " + std::string(get_value());
+std::ostream &operator<<(std::ostream &out, const JSON &json) {
+  out << json.to_string();
+  return out;
 }
+
 } // namespace picoJSON

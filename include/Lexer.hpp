@@ -9,11 +9,13 @@
 #include <vector>
 
 namespace picoJSON {
+  using TokenPair = std::pair<Token, std::string>;
+  using Tokens = std::vector<std::pair<Token, std::string>>;
 
 class Lexer {
 public:
   Lexer(const std::string json);
-  std::vector<std::pair<Token, std::string>> tokenize();
+  Tokens tokenize();
 
 private:
   std::string json_;

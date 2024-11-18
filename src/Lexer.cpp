@@ -1,317 +1,55 @@
 #include <Lexer.hpp>
+#include <cstddef>
+#include <sstream>
 
 namespace picoJSON {
+
 Lexer::Lexer(const std::string json) : json_(json) { tokenize(); }
 
-std::vector<std::pair<Token, std::string>> Lexer::tokenize() {
-  std::vector<std::pair<Token, std::string>> tokens{};
-
-  unsigned int line = 1;
-  bool is_string = false;
-  bool is_number = false;
-  bool is_bool = false;
-  bool is_null = false;
-  bool decimal = false;
-  bool exponent = false;
+void tokenize_null(Tokens &tokens, std::size_t &line_no) {
   std::string buffer = "";
+  tokens.push_back(std::pair<Token, std::string>(Token::JSONNULL, buffer));
+  line_no++;
+}
+
+void tokenize_bool(Tokens &tokens, std::size_t &line_no) {
+  std::string buffer = "";
+  tokens.push_back(std::pair<Token, std::string>(Token::JSONTRUE, buffer));
+  line_no++;
+}
+
+void tokenize_number(Tokens &tokens, std::size_t &line_no) {
+  std::string buffer = "";
+  tokens.push_back(std::pair<Token, std::string>(Token::NUMBER, buffer));
+  line_no++;
+}
+
+void tokenize_string(Tokens &tokens, std::size_t &line_no) {
+  std::string buffer = "";
+  tokens.push_back(std::pair<Token, std::string>(Token::STRING, buffer));
+  line_no++;
+}
+
+Tokens Lexer::tokenize() {
+  Tokens tokens{};
+  std::string buffer;
+
+  std::size_t line_no = 1;
   for (char c : json_) {
-    if (c == EOF)
-      break;
-    else if (c == '{') {
-      if (is_string)
-        buffer += c;
-      else {
-        buffer = c;
-        tokens->push_back(std::pair<Token, std::string>(LCURLY, buffer));
-        buffer = "";
-        line++;
-      }
-    } else if (c == '}') {
-      if (is_string)
-        buffer += c;
-      else {
-        if (is_number) {
-          if (buffer[buffer.length() - 1] == 'e' ||
-              buffer[buffer.length() - 1] == 'E')
-            throw SyntaxException(buffer, line);
-
-          if (buffer[buffer.length() - 1] == '-' ||
-              buffer[buffer.length() - 1] == '+' ||
-              buffer[buffer.length() - 1] == '.')
-            throw SyntaxException(buffer, line);
-
-          tokens->push_back(new std::pair<Token, std::string>(NUMBER, buffer));
-          buffer = "";
-          is_number = false;
-          decimal = false;
-          exponent = false;
-        } else if (is_bool) {
-          if (buffer.compare("true") == 0)
-            tokens->push_back(new std::pair<Token, std::string>(JSONTRUE, buffer));
-          else if (buffer.compare("false") == 0)
-            tokens->push_back(new std::pair<Token, std::string>(JSONFALSE, buffer));
-          else
-            throw SyntaxException(buffer, line);
-
-          is_bool = false;
-        } else if (is_null) {
-          if (buffer.compare("null") == 0)
-            tokens->push_back(new std::pair<Token, std::string>(JSONFALSE, buffer));
-          else
-            throw SyntaxException(buffer, "null", line);
-
-          is_null = false;
-        }
-
-        buffer = c;
-        tokens->push_back(new std::pair<Token, std::string>(RCURLY, buffer));
-        buffer = "";
-        line++;
-      }
+    if (c == '{') {
+      tokens.push_back(std::pair<Token, std::string>(Token::LCURLY, buffer));
     } else if (c == '[') {
-      if (is_string) {
-        buffer += c;
-      } else {
-        buffer = c;
-        tokens->push_back(new std::pair<Token, std::string>(LBRACE, buffer));
-        buffer = "";
-      }
-    } else if (c == ']') {
-      if (is_string)
-        buffer += c;
-      else {
-        if (is_number) {
-          if (buffer[buffer.length() - 1] == 'e' ||
-              buffer[buffer.length() - 1] == 'E') {
-            throw SyntaxException(buffer, line);
-          }
-
-          if (buffer[buffer.length() - 1] == '-' ||
-              buffer[buffer.length() - 1] == '+' ||
-              buffer[buffer.length() - 1] == '.') {
-            throw SyntaxException(buffer, line); 
-          }
-
-          tokens->push_back(new std::pair<Token, std::string>(NUMBER, buffer));
-          buffer = "";
-          is_number = false;
-          decimal = false;
-          exponent = false;
-        } else if (is_bool) {
-          if (buffer.compare("true") == 0) {
-            tokens->push_back(new std::pair<Token, std::string>(JSONTRUE, buffer));
-          } else if (buffer.compare("false") == 0) {
-            tokens->push_back(new std::pair<Token, std::string>(JSONFALSE, buffer));
-          } else {
-            throw SyntaxException(buffer, line); 
-          }
-
-          is_bool = false;
-        } else if (is_null) {
-          if (buffer.compare("null") == 0) {
-            tokens->push_back(new std::pair<Token, std::string>(JSONFALSE, buffer));
-          } else {
-            throw SyntaxException(buffer, "null", line);
-          }
-          is_null = false;
-        }
-
-        buffer = c;
-        tokens->push_back(new std::pair<Token, std::string>(RBRACE, buffer));
-        buffer = "";
-        line++;
-      }
+      tokens.push_back(std::pair<Token, std::string>(Token::LBRACE, buffer));
     } else if (c == '(') {
-      if (is_string) {
-        buffer += c;
-      } else {
-        buffer = c;
-        tokens->push_back(new std::pair<Token, std::string>(LPAREN, buffer));
-        buffer = "";
-      }
-    } else if (c == ')') {
-      if (is_string) {
-        buffer += c;
-      } else {
-        if (is_number) {
-          if (buffer[buffer.length() - 1] == 'e' ||
-              buffer[buffer.length() - 1] == 'E') {
-            throw SyntaxException(buffer, line); 
-          }
-
-          if (buffer[buffer.length() - 1] == '-' ||
-              buffer[buffer.length() - 1] == '+' ||
-              buffer[buffer.length() - 1] == '.') {
-            throw SyntaxException(buffer, line);
-          }
-
-          tokens->push_back(new std::pair<Token, std::string>(NUMBER, buffer));
-          buffer = "";
-          is_number = false;
-          decimal = false;
-          exponent = false;
-        } else if (is_bool) {
-          if (buffer.compare("true") == 0) {
-            tokens->push_back(new std::pair<Token, std::string>(JSONTRUE, buffer));
-          } else if (buffer.compare("false") == 0) {
-            tokens->push_back(new std::pair<Token, std::string>(JSONFALSE, buffer));
-          } else {
-            throw SyntaxException(buffer, line); 
-          }
-
-          is_bool = false;
-        } else if (is_null) {
-          if (buffer.compare("null") == 0) {
-            tokens->push_back(new std::pair<Token, std::string>(JSONFALSE, buffer));
-          } else {
-            throw SyntaxException(buffer, "null", line); 
-          }
-
-          is_null = false;
-        }
-
-        buffer = c;
-        tokens->push_back(new std::pair<Token, std::string>(RPAREN, buffer));
-        buffer = "";
-      }
+      tokens.push_back(std::pair<Token, std::string>(Token::LPAREN, buffer));
     } else if (c == ',') {
-      if (is_string) {
-        buffer += c;
-      } else {
-        if (is_number) {
-          if (buffer[buffer.length() - 1] == 'e' ||
-              buffer[buffer.length() - 1] == 'E') {
-            throw SyntaxException(buffer, line);
-          }
-
-          if (buffer[buffer.length() - 1] == '-' ||
-              buffer[buffer.length() - 1] == '+' ||
-              buffer[buffer.length() - 1] == '.') {
-            throw SyntaxException(buffer, line); 
-          }
-
-          tokens->push_back(new std::pair<Token, std::string>(NUMBER, buffer));
-          buffer = "";
-          is_number = false;
-          decimal = false;
-          exponent = false;
-        } else if (is_bool) {
-          if (buffer.compare("true") == 0) {
-            tokens->push_back(new std::pair<Token, std::string>(JSONTRUE, buffer));
-          } else if (buffer.compare("false") == 0) {
-            tokens->push_back(new std::pair<Token, std::string>(JSONFALSE, buffer));
-          } else {
-            throw SyntaxException(buffer, line); 
-          }
-          is_bool = false;
-        } else if (is_null) {
-          if (buffer.compare("null") == 0)
-            tokens->push_back(new pair<Token, string>(JSONNULL, buffer));
-          else
-            throw SyntaxException(buffer, "null", line);
-
-          isNull = false;
-        }
-        buffer = c;
-        tokens->push_back(new pair<Token, string>(COMMA, buffer));
-        buffer = "";
-        line++;
-      }
+      tokens.push_back(std::pair<Token, std::string>(Token::NUMBER, buffer));
     } else if (c == ':') {
-      if (isString)
-        buffer += c;
-      else {
-        buffer = c;
-        tokens->push_back(new pair<Token, string>(COLON, buffer));
-        buffer = "";
-      }
+      tokens.push_back(std::pair<Token, std::string>(Token::COLON, buffer));
     } else if (c == '\"') {
-      if (isString && !isNumber && !isBool && !isNull) {
-        tokens->push_back(new pair<Token, string>(STRING, buffer));
-        buffer = "";
-        isString = false;
-      } else if (!isString && !isNumber && !isBool && !isNull) {
-        isString = true;
-      } else
-        throw SyntaxException(buffer, line);
-    } else if (c == '.') {
-      if (isNumber && !buffer.empty() && !decimal) {
-        buffer += c;
-        decimal = true;
-      } else if (isString) {
-        buffer += c;
-      } else
-        throw SyntaxException(buffer, line);
-    } else if (Whitespace.find(c) != string::npos) {
-      if (isNumber) {
-        if (buffer[buffer.length() - 1] == 'e' ||
-            buffer[buffer.length() - 1] == 'E')
-          throw SyntaxException(buffer, line);
-
-        if (buffer[buffer.length() - 1] == '-' ||
-            buffer[buffer.length() - 1] == '+' ||
-            buffer[buffer.length() - 1] == '.')
-          throw SyntaxException(buffer, line);
-
-        tokens->push_back(new pair<Token, string>(NUMBER, buffer));
-        buffer = "";
-        isNumber = false;
-        decimal = false;
-        exponent = false;
-        isBool = false;
-      } else if (isString) {
-        buffer += c;
-      } else if (isBool) {
-        if (buffer.compare("true") == 0)
-          tokens->push_back(new pair<Token, string>(JSONTRUE, buffer));
-        else if (buffer.compare("false") == 0)
-          tokens->push_back(new pair<Token, string>(JSONFALSE, buffer));
-        else
-          throw SyntaxException(buffer, line);
-
-        isBool = false;
-      } else if (isNull) {
-        if (buffer.compare("null") == 0)
-          tokens->push_back(new pair<Token, string>(JSONNULL, buffer));
-        else
-          throw SyntaxException(buffer, line);
-
-        isNull = false;
-      }
-
-      if ((c != ' ' && c != '\t') && !isString)
-        line++;
-
-    } else if (Digits.find(c) != string::npos) {
-      if (!isString && !isNumber && !isBool && !isNull)
-        isNumber = true;
-      buffer += c;
+      tokenize_string(tokens, line_no);
     } else {
-      if ((c == 'e' || c == 'E') && isNumber && !exponent) {
-        buffer += c;
-        exponent = true;
-      } else if ((c == 't' || c == 'f') && !isString) {
-        buffer += c;
-        isBool = true;
-      } else if ((c == 'n') && !isString) {
-        buffer += c;
-        isNull = true;
-      } else if (c == '-' && !isString) {
-        if (isNumber && (buffer[buffer.length() - 1] == 'e' ||
-                         buffer[buffer.length() - 1] == 'E')) {
-          buffer += c;
-        } else
-          throw SyntaxException(buffer, line);
-      } else if (c == '+' && isNumber) {
-        if (buffer[buffer.length() - 1] == 'e' ||
-            buffer[buffer.length() - 1] == 'E') {
-          buffer += c;
-        } else
-          throw SyntaxException(buffer, line);
-      } else if (isString || isBool || isNull) {
-        buffer += c;
-      } else
-        throw SyntaxException(buffer, line);
+      // Raise exception.
     }
   }
 

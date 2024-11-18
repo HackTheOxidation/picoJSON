@@ -4,6 +4,7 @@
 #include "Token.hpp"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <string_view>
 
@@ -14,12 +15,12 @@ const std::string_view Digits = "1234567890";
 
 class Reader {
 public:
-  Reader(std::string file_name);
+  Reader(const std::string_view file_name);
 
-  std::string get_content() const;
+  std::stringstream get_content() const;
 
 private:
-  std::string file_name_;
+  const std::string_view file_name_;
 };
 } // namespace picoJSON
 
