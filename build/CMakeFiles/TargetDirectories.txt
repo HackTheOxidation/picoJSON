@@ -1,3 +1,0 @@
-/home/hacker/repos/picoJSON/build/CMakeFiles/picoJSON.dir
-/home/hacker/repos/picoJSON/build/CMakeFiles/edit_cache.dir
-/home/hacker/repos/picoJSON/build/CMakeFiles/rebuild_cache.dir

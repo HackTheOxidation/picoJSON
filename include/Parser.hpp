@@ -25,15 +25,16 @@ public:
   void print() const;
 
 private:
-  std::vector<std::shared_ptr<std::pair<Token, std::string>>> tokens_;
-  std::shared_ptr<std::pair<Token, std::string>> current_token_pair_;
+  std::vector<std::pair<Token, std::string>> tokens_;
+  std::optional<std::pair<Token, std::string>> current_token_pair_;
   long unsigned int index_;
 
-  std::optional<JSON> parse_JSON();
+  std::optional<JSONObject> parse_JSON();
   std::optional<JSON> parse();
   std::optional<JSON> parse_value();
-  std::optional<JSON> parse_object();
-  std::optional<JSON> parse_array();
+  std::optional<JSONObject> parse_object();
+  std::optional<JSONArray> parse_array();
+  std::optional<std::pair<std::string, JSON>> parse_property();
   void advance();
 };
 } // namespace picoJSON
