@@ -1,0 +1,29 @@
+plugins {
+  id 'cpp-library'
+}
+
+version = '0.1.0'
+
+library {
+  source.from file('src')
+  privateHeaders.from file('src')
+  publicHeaders.from file('include')
+}
+
+tasks.withType(CppCompile).configureEach {
+    // Define a preprocessor macro for every binary
+    macros.put("NDEBUG", null)
+
+    // Define a compiler options
+    compilerArgs.add '-std=c++23'
+
+    // Define toolchain-specific compiler options
+    compilerArgs.addAll toolChain.map { toolChain ->
+        if (toolChain in [ Gcc, Clang ]) {
+            return ['-O3', '-fno-access-control', '-Wall', '-Wextra', '-Wshadow', '-Wformat=2', '-Wunused', '-Wconversion', '-Wpedantic', '-Werror']
+        } else if (toolChain in VisualCpp) {
+            return ['/Zi', '/W4', '/WX', '/std:c++23']
+        }
+        return []
+    }
+}
