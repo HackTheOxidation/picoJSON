@@ -1,4 +1,4 @@
-#include <Lexer.hpp>
+#include <picoJSON/Lexer.hpp>
 #include <cctype>
 #include <cstddef>
 #include <iterator>
@@ -67,7 +67,7 @@ Tokens Lexer::tokenize() {
 
   std::size_t line_no = 1;
   for (auto iter = json_.cbegin(); iter != json_.cend(); iter++) {
-    c = *iter;
+    const auto c = *iter;
     if (c == '{') {
       tokens.push_back(std::pair(Token::LCURLY, "{"));
     } else if (c == '[') {
